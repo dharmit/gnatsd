@@ -1,0 +1,13 @@
+FROM registry.centos.org/dharmit/golang:1.8
+ 
+MAINTAINER Dharmit Shah <dharmit@redhat.com>
+ 
+COPY . /home/user/go/src/github.com/nats-io/gnatsd
+WORKDIR /home/user/go/src/github.com/nats-io/gnatsd
+ 
+RUN sudo GOPATH=/home/user/go CGO_ENABLED=0 go install -v -a -tags netgo -installsuffix netgo -ldflags "-s -w -X github.com/nats-io/gnatsd/version.GITCOMMIT=`git rev-parse --short HEAD`" && \
+    echo "export PATH=$PATH:/home/user/go/bin" >> /home/user/.bashrc
+ 
+EXPOSE 4222 8222
+ENTRYPOINT ["/home/user/go/bin/gnatsd"]
+CMD ["--help"]
